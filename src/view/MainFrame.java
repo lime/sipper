@@ -24,6 +24,7 @@ public class MainFrame extends JFrame {
 		// Add the tabs passed as arguments.
 		for (JPanel panel : panels) {
 			tabbedPane.addTab(panel.getName(), panel);
+			tabbedPane.setBackground(this.getBackground());
 		}
 
 		this.add(tabbedPane);

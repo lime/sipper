@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -15,6 +14,7 @@ import javax.swing.UIManager;
 import model.Ingredient;
 import model.Recipe;
 import view.FillerPanel;
+import view.IngredientDisplayPanel;
 import view.MainFrame;
 import view.RecipeDisplayPanel;
 import view.ScrollViewPanel;
@@ -30,17 +30,19 @@ public class Shroomware {
 	private static ArrayList<Ingredient> ingredientList;
 
 	/**
-	 * The main method, which builds the main window and GUI.
+	 * The main method, which calls helper method to load data lists from the
+	 * database and build the main window and GUI.
 	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
 
-		// Initialize the list from the database.
+		// Initialize the lists from the database.
 		try {
 			initializeLists();
 		} catch (SQLException e) {
-			// XXX any smart error handling?
+			System.out
+					.println("Shroomware.main(): error in loading lists from database.");
 			e.printStackTrace();
 		}
 
@@ -60,8 +62,10 @@ public class Shroomware {
 	 */
 	private static void initializeLists() throws SQLException {
 
-		recipeList = DatabaseLoader.getRecipeList();
-		ingredientList = DatabaseLoader.getIngredientList();
+		DatabaseLoader dbLoader = new DatabaseLoader(null);
+		// TODO contants go where?
+		recipeList = dbLoader.getRecipeList();
+		ingredientList = dbLoader.getIngredientList();
 
 	}
 
@@ -80,21 +84,21 @@ public class Shroomware {
 			e.printStackTrace();
 		}
 
-		JPanel recipesPanel = new ScrollViewPanel(recipeList,
-				new RecipeDisplayPanel());
+		JPanel recipesPanel = new ScrollViewPanel<Recipe>(recipeList,
+				new RecipeDisplayPanel(), "Drinks");
 
-		JPanel ingredientsPanel = new ScrollViewPanel(ingredientList,
-				new IngredientDisplayPanel());
+		JPanel ingredientsPanel = new ScrollViewPanel<Ingredient>(
+				ingredientList, new IngredientDisplayPanel(), "Ingredients");
 
 		// extra fillers
-		FillerPanel fillerPanel2 = new FillerPanel("pöö");
+		FillerPanel fillerPanel2 = new FillerPanel("tillin tallin");
 		FillerPanel fillerPanel3 = new FillerPanel("Fnurkeli");
 
 		// TODO Auto-generated constructor stub
 
 		// Create a new main window, giving it its tabs
 		MainFrame mainFrame = new MainFrame("Shroomware", new JPanel[] {
-				recipesPanel, fillerPanel2, fillerPanel3 });
+				recipesPanel, ingredientsPanel, fillerPanel2, fillerPanel3 });
 
 		// Display the window.
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

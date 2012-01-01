@@ -3,7 +3,10 @@
  */
 package view;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -15,11 +18,22 @@ import javax.swing.event.ListSelectionListener;
  * 
  * @author 217262
  */
-public abstract class SelectionDisplayPanel<T> extends JPanel implements
+abstract class SelectionDisplayPanel<T> extends JPanel implements
 		ListSelectionListener {
 
-	public SelectionDisplayPanel() {
-		this.setPreferredSize(new Dimension(500, 500));
+	protected static final NumberFormat CURRENCY_FORMAT = NumberFormat
+			.getCurrencyInstance(new Locale("fi", "FI"));
+
+	SelectionDisplayPanel() {
+		this.setPreferredSize(new Dimension(800, 600));
+
+		this.setBackground(new Color(0, true));
+		/* SwingUtilities.invokeLater(new Runnable() {
+		 * @Override public void run() { SelectionDisplayPanel.this
+		 * .setBackground(SelectionDisplayPanel.this.getParent()
+		 * .getBackground()); System.out .println(
+		 * "SelectionDisplayPanel.SelectionDisplayPanel(...).new Runnable() {...}.run() "
+		 * + getParent().getBackground()); } }); */
 	}
 
 	/* (non-Javadoc)
@@ -50,6 +64,8 @@ public abstract class SelectionDisplayPanel<T> extends JPanel implements
 
 		// Use the subclass-specific upadting method.
 		this.updateDisplayedItem(displayItem);
+		// TODO listener in the grandparent instead of jumping like thiss
+		this.getParent().getParent().repaint();
 	}
 
 	/**

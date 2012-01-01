@@ -11,55 +11,50 @@ package model;
 public enum Unit {
 	L {
 		@Override
-		public int toMillilitres() {
+		public int toMilliliters() {
 			return 1000;
 		}
 	},
 	DL {
 		@Override
-		public int toMillilitres() {
+		public int toMilliliters() {
 			return 100;
 		}
 	},
 	CL {
 		@Override
-		public int toMillilitres() {
+		public int toMilliliters() {
 			return 10;
 		}
 	},
 	ML {
 		@Override
-		public int toMillilitres() {
+		public int toMilliliters() {
 			return 1;
 		}
 	},
 	TBPS {
 		@Override
-		public int toMillilitres() {
+		public int toMilliliters() {
 			return 15;
 		}
 	},
 	TSP {
 		@Override
-		public int toMillilitres() {
+		public int toMilliliters() {
 			return 5;
 		}
 	};
 
-	/* (non-Javadoc)
-	 * @see java.lang.Enum#toString() */
-	/**
-	 * Returns the name of the unit as a lowercase String.
-	 */
-	@Override
-	public String toString() {
-		return super.toString().toLowerCase();
-	}
-
 	// public abstract String toLongerString(); //TODO longer String?
 	/**
-	 * @return The size per unit in millilitres.
+	 * @return The size per unit in milliliters.
 	 */
-	public abstract int toMillilitres();
+	public abstract int toMilliliters();
+
+	public static void main(String[] args) {
+		Unit unit = Unit.valueOf("ML");
+		System.out.println("Unit.main(): " + unit);
+	}
 
 }

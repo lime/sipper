@@ -3,6 +3,9 @@
  */
 package model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * @author Emil Sågfors
  */
@@ -14,8 +17,8 @@ public class Amount {
 	/**
 	 * 
 	 */
-	public Amount(int value, Unit unit) {
-		this.millilitres = value * unit.toMillilitres();
+	public Amount(double value, Unit unit) {
+		this.millilitres = (int) (value * unit.toMilliliters());
 		this.originalUnit = unit;
 	}
 
@@ -26,8 +29,9 @@ public class Amount {
 	 *            the target unit
 	 * @return the amount in the specified unit
 	 */
-	public double toUnit(Unit unit) {
-		return this.millilitres / unit.toMillilitres();
+	public BigDecimal toUnit(Unit unit) {
+		return BigDecimal.valueOf(this.millilitres).divide(
+				BigDecimal.valueOf(unit.toMilliliters()), 5, RoundingMode.HALF_EVEN).stripTrailingZeros();
 	}
 
 	/**
@@ -46,7 +50,8 @@ public class Amount {
 			return false;
 		}
 		Amount amounto = (Amount) o;
+		/* Two amounts are equal if they represent the same number of
+		 * milliliters. */
 		return this.toUnit(Unit.ML) == amounto.toUnit(Unit.ML);
 	}
-
 }

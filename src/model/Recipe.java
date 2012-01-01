@@ -3,43 +3,57 @@
  */
 package model;
 
+import java.math.BigDecimal;
+import java.util.Map.Entry;
+
 /**
  * @author Emil Sågfors
  */
 public class Recipe {
 
+	public static final String ID_COLUMN = "ID";
+	public static final String NAME_COLUMN = "name";
+	public static final String PRICE_COLUMN = "price"; // TODO remove
+	public static final String INGREDIENT_LIST_COLUMN = "ingredientID";
+	public static final String INSTRUCTIONS_COLUMN = "instructions";
+
+	/**
+	 * The ID number of the recipe. Must be unique.
+	 */
+	private final int ID;
 	/**
 	 * The name of the drink.
 	 */
-	private String name;
+	private final String name;
 	/**
 	 * The list of ingredients used in the drink.
 	 */
-	private IngredientList ingredients;
+	private final RecipeIngredients ingredients;
 	/**
 	 * The instructions for preparing the drink.
 	 */
-	private String[] instructions;
-	/**
-	 * Price of the product. Will not neccessarily be used in final product
-	 * (dynamically calculated).
-	 */
-	private Double price;
+	private final String instructions;
 
 	/**
-	 * Creates a new recipe from the specified parameters. //TODO @param
+	 * @param name
+	 * @param ingredients
+	 * @param instructions
+	 * @param price
 	 */
-	public Recipe() {
-		this("");
-	}
-
-	public Recipe(String name) {
-		this(name, 0);
-	}
-
-	public Recipe(String name, double price) {
+	public Recipe(int ID, String name, RecipeIngredients ingredients,
+			String instructions) {
+		this.ID = ID;
 		this.name = name;
-		this.price = price;
+		this.ingredients = ingredients;
+		this.instructions = instructions;
+	}
+
+	/**
+	 * @return the ID of the drink
+	 */
+	public int getID() {
+		// TODO Auto-generated method stub
+		return this.ID;
 	}
 
 	/**
@@ -52,15 +66,16 @@ public class Recipe {
 	/**
 	 * @return the ingredients used in the drink
 	 */
-	public IngredientList getIngredientList() {
+	public RecipeIngredients getIngredientList() {
 		return this.ingredients;
 	}
 
 	/**
 	 * @return the instructions
 	 */
-	public String[] getInstructions() {
-		return this.instructions;
+	public String getInstructions() {
+		return "Lorem ipsum dolor sit amet, conseceutur adepiscin velit.";
+		// return this.instructions;
 	}
 
 	/* (non-Javadoc)
@@ -72,10 +87,20 @@ public class Recipe {
 	}
 
 	/**
-	 * @return
+	 * @return the calculated price of all required ingredients in the recipe
 	 */
-	public Double getPrice() {
-		// TODO Auto-generated method stub
-		return this.price;
+	public BigDecimal getPrice() {
+		BigDecimal price = BigDecimal.ZERO;
+		// add the price of each ingredient
+		//FIXME inexact values... get rid of doubles
+		for (Entry<Ingredient, Amount> entry : this.ingredients.entrySet()) {
+			
+			BigDecimal ingredientPrice = entry.getKey().getUnitPrice(Unit.CL)
+					.multiply(entry.getValue().toUnit(Unit.CL));
+			price = price.add(ingredientPrice);
+			System.out.println("Recipe.getPrice() unitPrice = "+entry.getKey().getUnitPrice(Unit.CL)+", CL = "+entry.getValue().toUnit(Unit.CL));
+			System.out.println("Recipe.getPrice() ingredientPrice = "+ingredientPrice+", price = "+price);
+		}
+		return price;
 	}
 }

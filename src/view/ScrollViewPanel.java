@@ -4,14 +4,13 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.ScrollPane;
 import java.util.ArrayList;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
-
-import controller.DatabaseLoader;
 
 /**
  * A container class for the typical view used in each tab. Consists of a
@@ -30,18 +29,21 @@ public class ScrollViewPanel<T> extends JPanel {
 	 * 
 	 */
 	public ScrollViewPanel(ArrayList<T> displayItemList,
-			SelectionDisplayPanel<T> displayPanel) {
+			SelectionDisplayPanel<T> displayPanel, String name) {
 
 		this.setLayout(new BorderLayout());
 
 		// Initiate arguments.
 		this.scrollList = new JList(displayItemList.toArray());
 		this.displayPanel = displayPanel;
+		this.setName(name); // Used in tab
 
 		// Set the display panel in the center
-		this.add(displayPanel, BorderLayout.CENTER);
-		// Use the display panel's name
-		this.setName(displayPanel.getName());
+		this.add(this.displayPanel, BorderLayout.CENTER);
+
+		// translucent backgrounds
+		this.setBackground(new Color(0, true));
+		this.displayPanel.setBackground(this.getBackground());
 
 		// Initiate scroll panel on left.
 		ScrollPane sideScrollPane = new ScrollPane();
