@@ -3,25 +3,17 @@
  */
 package model;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 /**
- * @author Emil Sågfors
+ * A class representing an ingredient.
+ * 
+ * @author 217262
  */
-public class Ingredient implements Comparable<Ingredient> {
-
-	public static final String ID_COLUMN = "ID";
-	public static final String NAME_COLUMN = "name";
-	public static final String ALCOHOL_CONTENT_COLUMN = "alcoholContent";
-	public static final String CONTAINER_SIZE_VALUE_COLUMN = "containerSizeValue";
-	public static final String CONTAINER_SIZE_UNIT_COLUMN = "containerSizeUnit";
-	public static final String CONTAINER_PRIZE_COLUMN = "containerPrice";
+public class Ingredient extends ListedItem {
 
 	/**
 	 * ID number of the ingredient. Must be uniqe.
 	 */
-	private final int ID;
+	private final Integer ID;
 	/**
 	 * Name of the ingredient.
 	 */
@@ -29,7 +21,7 @@ public class Ingredient implements Comparable<Ingredient> {
 	/**
 	 * Alcohol content in percentage by volume.
 	 */
-	private BigDecimal alcoholContent;
+	private double alcoholContent;
 	/**
 	 * Size of the container the ingredient is bought in.
 	 */
@@ -37,7 +29,7 @@ public class Ingredient implements Comparable<Ingredient> {
 	/**
 	 * Price per container.
 	 */
-	private BigDecimal containerPrize;
+	private double containerPrize;
 	/**
 	 * The store from which the ingredient is bought.
 	 */
@@ -47,13 +39,35 @@ public class Ingredient implements Comparable<Ingredient> {
 	 */
 	private String comment;
 
-	public Ingredient(int ID, String name, BigDecimal alcoholContent,
-			Amount containerSize, BigDecimal containerPrize) {
+	/**
+	 * Creates a new ingredient object.
+	 * 
+	 * @param ID
+	 *            unique ID number of the ingredient
+	 * @param name
+	 *            name of ingredient
+	 * @param alcoholContent
+	 *            alcohol percentage expressed as a <code>double</code>
+	 * @param containerSize
+	 *            size of a container in which the ingredient is bought
+	 * @param containerPrize
+	 *            price of a container in which the ingredient is bought
+	 * @param store
+	 *            name of the store from which this ingredient is typicall
+	 *            bought
+	 * @param comment
+	 *            optional comment
+	 */
+	public Ingredient(Integer ID, String name, double alcoholContent,
+			Amount containerSize, double containerPrize, String store,
+			String comment) {
 		this.ID = ID;
 		this.name = name;
 		this.alcoholContent = alcoholContent;
 		this.containerSize = containerSize;
 		this.containerPrize = containerPrize;
+		this.store = store;
+		this.comment = comment;
 	}
 
 	/* ########### ########### Getters and setters ########### ########### */
@@ -61,13 +75,15 @@ public class Ingredient implements Comparable<Ingredient> {
 	/**
 	 * @return the ID of the ingredient
 	 */
-	public int getID() {
+	@Override
+	public Integer getID() {
 		return this.ID;
 	}
 
 	/**
 	 * @return the name of the ingredient
 	 */
+	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -83,7 +99,7 @@ public class Ingredient implements Comparable<Ingredient> {
 	/**
 	 * @return the alcoholContent
 	 */
-	public BigDecimal getAlcoholContent() {
+	public double getAlcoholContent() {
 		return this.alcoholContent;
 	}
 
@@ -91,7 +107,7 @@ public class Ingredient implements Comparable<Ingredient> {
 	 * @param alcoholContent
 	 *            the alcoholContent to set
 	 */
-	public void setAlcoholContent(BigDecimal alcoholContent) {
+	public void setAlcoholContent(double alcoholContent) {
 		this.alcoholContent = alcoholContent;
 	}
 
@@ -113,7 +129,7 @@ public class Ingredient implements Comparable<Ingredient> {
 	/**
 	 * @return the containerPrize
 	 */
-	public BigDecimal getContainerPrize() {
+	public double getContainerPrize() {
 		return this.containerPrize;
 	}
 
@@ -121,7 +137,7 @@ public class Ingredient implements Comparable<Ingredient> {
 	 * @param containerPrize
 	 *            the containerPrize to set
 	 */
-	public void setContainerPrize(BigDecimal containerPrize) {
+	public void setContainerPrize(double containerPrize) {
 		this.containerPrize = containerPrize;
 	}
 
@@ -162,27 +178,30 @@ public class Ingredient implements Comparable<Ingredient> {
 	 *            the requested unit
 	 * @return the price per given unit of the ingredient
 	 */
-	public BigDecimal getUnitPrice(Unit unit) {
-		if (this.getContainerSize().toUnit(unit).equals(BigDecimal.ZERO))
-			return BigDecimal.ZERO;
-		else
-			return this.getContainerPrize().divide(
-					this.getContainerSize().toUnit(unit),10, RoundingMode.HALF_EVEN).stripTrailingZeros();
+	public double getUnitPrice(Unit unit) {
+		if (this.getContainerSize().toUnit(unit) == 0) {
+			return 0;
+		} else {
+			return this.getContainerPrize()
+					/ this.getContainerSize().toUnit(unit);
+			/* this .getContainerPrize()
+			 * .divide(this.getContainerSize().toUnit(unit), 10,
+			 * RoundingMode.HALF_EVEN).stripTrailingZeros(); */
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object) */
-	@Override
-	public int compareTo(Ingredient other) {
-		// compare the names of the ingredients
-		return this.getName().compareToIgnoreCase(other.getName());
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString() */
-	@Override
-	public String toString() {
-		// TODO just temporary, use model
-		return this.getName();
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param ingredient
+	 *            the Ingredient to be copied
+	 * @return A new instance of {@link Ingredient} with the same properties as
+	 *         <code>ingredient</code>.
+	 */
+	public static Ingredient newInstance(Ingredient ingredient) {
+		return new Ingredient(ingredient.getID(), ingredient.getName(),
+				ingredient.getAlcoholContent(), ingredient.getContainerSize(),
+				ingredient.getContainerPrize(), ingredient.getStore(),
+				ingredient.getComment());
 	}
 }

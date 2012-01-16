@@ -3,24 +3,19 @@
  */
 package model;
 
-import java.math.BigDecimal;
 import java.util.Map.Entry;
 
 /**
- * @author Emil Sågfors
+ * A class representing a recipe.
+ * 
+ * @author 217262
  */
-public class Recipe {
-
-	public static final String ID_COLUMN = "ID";
-	public static final String NAME_COLUMN = "name";
-	public static final String PRICE_COLUMN = "price"; // TODO remove
-	public static final String INGREDIENT_LIST_COLUMN = "ingredientID";
-	public static final String INSTRUCTIONS_COLUMN = "instructions";
+public class Recipe extends ListedItem {
 
 	/**
 	 * The ID number of the recipe. Must be unique.
 	 */
-	private final int ID;
+	private final Integer ID;
 	/**
 	 * The name of the drink.
 	 */
@@ -35,12 +30,18 @@ public class Recipe {
 	private final String instructions;
 
 	/**
+	 * Constructs a new recipe object with the given attributes.
+	 * 
+	 * @param ID
+	 *            unique ID of this recipe
 	 * @param name
+	 *            name of drink
 	 * @param ingredients
+	 *            the ingredients and amounts used in this recipe
 	 * @param instructions
-	 * @param price
+	 *            optional instructions for prepaoring the recipe
 	 */
-	public Recipe(int ID, String name, RecipeIngredients ingredients,
+	public Recipe(Integer ID, String name, RecipeIngredients ingredients,
 			String instructions) {
 		this.ID = ID;
 		this.name = name;
@@ -51,14 +52,15 @@ public class Recipe {
 	/**
 	 * @return the ID of the drink
 	 */
-	public int getID() {
-		// TODO Auto-generated method stub
+	@Override
+	public Integer getID() {
 		return this.ID;
 	}
 
 	/**
 	 * @return the name of the drink
 	 */
+	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -66,7 +68,7 @@ public class Recipe {
 	/**
 	 * @return the ingredients used in the drink
 	 */
-	public RecipeIngredients getIngredientList() {
+	public RecipeIngredients getIngredients() {
 		return this.ingredients;
 	}
 
@@ -74,33 +76,37 @@ public class Recipe {
 	 * @return the instructions
 	 */
 	public String getInstructions() {
-		return "Lorem ipsum dolor sit amet, conseceutur adepiscin velit.";
-		// return this.instructions;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString() */
-	@Override
-	public String toString() {
-		// TODO use a listcellrenderer instead
-		return this.getName();
+		return this.instructions;
 	}
 
 	/**
 	 * @return the calculated price of all required ingredients in the recipe
 	 */
-	public BigDecimal getPrice() {
-		BigDecimal price = BigDecimal.ZERO;
-		// add the price of each ingredient
-		//FIXME inexact values... get rid of doubles
+	public double getPrice() {
+		double price = 0;
+
 		for (Entry<Ingredient, Amount> entry : this.ingredients.entrySet()) {
-			
-			BigDecimal ingredientPrice = entry.getKey().getUnitPrice(Unit.CL)
-					.multiply(entry.getValue().toUnit(Unit.CL));
-			price = price.add(ingredientPrice);
-			System.out.println("Recipe.getPrice() unitPrice = "+entry.getKey().getUnitPrice(Unit.CL)+", CL = "+entry.getValue().toUnit(Unit.CL));
-			System.out.println("Recipe.getPrice() ingredientPrice = "+ingredientPrice+", price = "+price);
+			// add up the price of each ingredient
+			double ingredientPrice = entry.getKey().getUnitPrice(Unit.CL)
+					* entry.getValue().toUnit(Unit.CL);
+			price += ingredientPrice;
+
 		}
+
 		return price;
+	}
+
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param recipe
+	 *            the recipe that is to be copied
+	 * @return A new instance of {@link Recipe} with the same properties as
+	 *         <code>recipe</code>.
+	 */
+	public static Recipe newInstance(Recipe recipe) {
+		return new Recipe(recipe.getID(), recipe.getName(),
+				RecipeIngredients.newInstance(recipe.getIngredients()),
+				recipe.getInstructions());
 	}
 }
